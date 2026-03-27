@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ontario Rent vs. Buy Calculator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2a5a8c;
+    --accent: #e8a838;
+    --accent-dark: #c48a20;
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --text-light: #6b7c93;
+    --border: #dce3ec;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --blue: #3498db;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 28px 20px;
+    text-align: center;
+  }
+  .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 0.95rem; opacity: 0.85; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon {
+    width: 28px; height: 28px; border-radius: 6px; display: flex;
+    align-items: center; justify-content: center; font-size: 14px;
+  }
+  .icon-buy { background: #e8f5e9; color: var(--green); }
+  .icon-rent { background: #fde8e8; color: var(--red); }
+  .icon-shared { background: #e3f2fd; color: var(--blue); }
+  .icon-result { background: #fff8e1; color: var(--accent-dark); }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .field-row { display: flex; align-items: center; gap: 10px; }
+  .field input[type="range"] { flex: 1; accent-color: var(--primary); }
+  .field .val {
+    min-width: 100px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--primary);
+  }
+  .field input[type="number"] {
+    width: 110px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: right;
+    font-weight: 600;
+    color: var(--primary);
+  }
+  .field input[type="number"]:focus { outline: 2px solid var(--primary-light); border-color: transparent; }
+
+  .toggle-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px; font-size: 0.9rem;
+  }
+  .toggle-row input[type="checkbox"] {
+    width: 18px; height: 18px; accent-color: var(--primary);
+  }
+
+  .info-note {
+    background: #f0f4ff;
+    border-left: 3px solid var(--blue);
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: var(--text-light);
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .result-banner {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .result-banner .verdict {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .verdict-buy { color: var(--green); }
+  .verdict-rent { color: var(--red); }
+  .verdict-tie { color: var(--blue); }
+  .result-banner .subtitle {
+    font-size: 0.95rem;
+    color: var(--text-light);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .summary-card {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .summary-card .label { font-size: 0.78rem; text-transform: uppercase; color: var(--text-light); font-weight: 600; letter-spacing: 0.4px; }
+  .summary-card .value { font-size: 1.3rem; font-weight: 800; margin-top: 4px; }
+  .summary-card .sub { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+
+  .chart-container {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .chart-container h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+  .chart-wrapper { position: relative; height: 380px; }
+
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .breakdown-table th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 12px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .breakdown-table th:first-child { text-align: left; border-radius: 8px 0 0 0; }
+  .breakdown-table th:last-child { border-radius: 0 8px 0 0; }
+  .breakdown-table td {
+    padding: 8px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-table td:first-child { text-align: left; font-weight: 600; }
+  .breakdown-table tr:nth-child(even) { background: #f8fafc; }
+  .breakdown-table tr:hover { background: #edf2f7; }
+
+  .table-scroll { overflow-x: auto; }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-top: 30px;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    line-height: 1.6;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Ontario: Rent vs. First-Time Home Buyer</h1>
+  <p>Compare the true cost of renting versus buying over time &mdash; with Ontario-specific tax rules &amp; incentives</p>
+</div>
+
+<div class="container">
+
+  <!-- INPUTS -->
+  <div class="grid">
+
+    <!-- BUYING INPUTS -->
+    <div class="card">
+      <div class="card-title"><span class="icon icon-buy">&#127968;</span> Buying Inputs</div>
+
+      <div class="field">
+        <label>Home Purchase Price</label>
+        <div class="field-row">
+          <input type="range" id="homePrice" min="100000" max="2000000" step="5000" value="600000">
+          <span class="val" id="homePriceVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Down Payment (%)</label>
+        <div class="field-row">
+          <input type="range" id="downPct" min="5" max="50" step="0.5" value="10">
+          <span class="val" id="downPctVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mortgage Interest Rate (%)</label>
+        <div class="field-row">
+          <input type="range" id="mortgageRate" min="1" max="10" step="0.05" value="4.5">
+          <span class="val" id="mortgageRateVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Amortization Period</label>
+        <div class="field-row">
+          <input type="range" id="amortYears" min="5" max="30" step="5" value="25">
+          <span class="val" id="amortYearsVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Property Tax Rate (% of home value)</label>
+        <div class="field-row">
+          <input type="range" id="propTaxRate" min="0.4" max="2" step="0.05" value="1.1">
+          <span class="val" id="propTaxRateVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Condo Fees / Maintenance</label>
+        <div class="field-row">
+          <input type="range" id="condoFees" min="0" max="1500" step="25" value="300">
+          <span class="val" id="condoFeesVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Home Insurance (Annual)</label>
+        <div class="field-row">
+          <input type="range" id="homeInsurance" min="600" max="5000" step="50" value="1800">
+          <span class="val" id="homeInsuranceVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Home Appreciation Rate</label>
+        <div class="field-row">
+          <input type="range" id="homeAppreciation" min="0" max="10" step="0.25" value="3">
+          <span class="val" id="homeAppreciationVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Closing Costs</label>
+        <div class="field-row">
+          <input type="range" id="closingCosts" min="1000" max="15000" step="500" value="5000">
+          <span class="val" id="closingCostsVal"></span>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <input type="checkbox" id="isFirstTimeBuyer" checked>
+        <label for="isFirstTimeBuyer" style="margin:0;text-transform:none;font-size:0.9rem;color:var(--text)">
+          First-time home buyer? (LTT rebate up to $4,000)
+        </label>
+      </div>
+
+      <div class="info-note">
+        <strong>CMHC Insurance:</strong> Automatically calculated if down payment &lt; 20% (max home price $1,000,000).<br>
+        <strong>Stress Test:</strong> Qualifying rate = higher of your rate + 2% or 5.25%.
+      </div>
+    </div>
+
+    <!-- RENTING INPUTS -->
+    <div class="card">
+      <div class="card-title"><span class="icon icon-rent">&#127972;</span> Renting Inputs</div>
+
+      <div class="field">
+        <label>Monthly Rent</label>
+        <div class="field-row">
+          <input type="range" id="monthlyRent" min="500" max="5000" step="25" value="2000">
+          <span class="val" id="monthlyRentVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Annual Rent Increase</label>
+        <div class="field-row">
+          <input type="range" id="rentIncrease" min="0" max="8" step="0.25" value="2.5">
+          <span class="val" id="rentIncreaseVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tenant Insurance</label>
+        <div class="field-row">
+          <input type="range" id="tenantInsurance" min="0" max="200" step="5" value="40">
+          <span class="val" id="tenantInsuranceVal"></span>
+        </div>
+      </div>
+
+      <div class="card-title" style="margin-top:16px"><span class="icon icon-shared">&#9881;</span> Shared Assumptions</div>
+
+      <div class="field">
+        <label>Investment Return (Renter Portfolio)</label>
+        <div class="field-row">
+          <input type="range" id="investReturn" min="0" max="12" step="0.25" value="6">
+          <span class="val" id="investReturnVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Time Horizon (Years)</label>
+        <div class="field-row">
+          <input type="range" id="timeHorizon" min="1" max="30" step="1" value="10">
+          <span class="val" id="timeHorizonVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>FHSA Annual Contribution</label>
+        <div class="field-row">
+          <input type="range" id="fhsaContrib" min="0" max="8000" step="500" value="8000">
+          <span class="val" id="fhsaContribVal"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Marginal Tax Rate</label>
+        <div class="field-row">
+          <input type="range" id="taxRate" min="15" max="53" step="0.5" value="29.65">
+          <span class="val" id="taxRateVal"></span>
+        </div>
+      </div>
+
+      <div class="info-note">
+        <strong>FHSA:</strong> First Home Savings Account &mdash; contributions are tax-deductible (like RRSP) and withdrawals are tax-free (like TFSA) for a first home. Max $8,000/yr, $40,000 lifetime.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESULTS -->
+  <div class="result-banner">
+    <div class="card-title" style="justify-content:center"><span class="icon icon-result">&#128200;</span> Results</div>
+    <div class="verdict" id="verdictText"></div>
+    <div class="subtitle" id="verdictSub"></div>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-container">
+    <h3>Net Worth Projection</h3>
+    <div class="chart-wrapper">
+      <canvas id="mainChart"></canvas>
+    </div>
+  </div>
+
+  <!-- TABLES -->
+  <div class="chart-container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tabNetWorth">Net Worth Table</button>
+      <button class="tab-btn" data-tab="tabMonthly">Monthly Costs</button>
+      <button class="tab-btn" data-tab="tabOntario">Ontario Details</button>
+    </div>
+    <div id="tabNetWorth" class="tab-content active">
+      <div class="table-scroll"><table class="breakdown-table" id="netWorthTable"></table></div>
+    </div>
+    <div id="tabMonthly" class="tab-content">
+      <div class="table-scroll"><table class="breakdown-table" id="monthlyTable"></table></div>
+    </div>
+    <div id="tabOntario" class="tab-content">
+      <div id="ontarioDetails"></div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This calculator is for educational purposes only and does not constitute financial advice.
+    Actual costs may vary. Consult a licensed mortgage broker or financial advisor for personalized advice.<br>
+    Provided by <strong>Corcoran Horizon Realty â Ontario Real Estate Brokerage</strong>
+  </div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = v => '$' + Math.round(v).toLocaleString();
+const pct = v => parseFloat(v).toFixed(2) + '%';
+
+// ============ ONTARIO LTT CALCULATION ============
+function calcOntarioLTT(price) {
+  if (price <= 55000) return price * 0.005;
+  if (price <= 250000) return 55000 * 0.005 + (price - 55000) * 0.01;
+  if (price <= 400000) return 55000 * 0.005 + 195000 * 0.01 + (price - 250000) * 0.015;
+  if (price <= 2000000) return 55000 * 0.005 + 195000 * 0.01 + 150000 * 0.015 + (price - 400000) * 0.02;
+  return 55000 * 0.005 + 195000 * 0.01 + 150000 * 0.015 + 1600000 * 0.02 + (price - 2000000) * 0.025;
+}
+
+// ============ CMHC PREMIUM ============
+function calcCMHCPremium(loanAmt, homePrice) {
+  const ratio = (homePrice - (homePrice - loanAmt)) / homePrice;
+  // CMHC premium r atio <= 0.75) return loanAmt * 0.017;
+  if (ratio <= 0.80) return loanAmt * 0.024;
+  if (ratio <= 0.85) return loanAmt * 0.028;
+  if (ratio <= 0.90) return loanAmt * 0.031;
+  if (ratio <= 0.95) return loanAmt * 0.04;
+  return 0;
+}
+
+function calcMonthlyMortgage(principal, annualRate, years) {
+  const r = annualRate / 12;
+  const n = years * 12;
+  if (r === 0) return principal / n;
+  return principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+}
+
+function getMortgageBalance(principal, annualRate, years, monthsPaid) {
+  const r = annualRate / 12;
+  const n = years * 12;
+  if (r === 0) return principal - (principal / n) * monthsPaid;
+  const payment = principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  return principal * Math.pow(1 + r, monthsPaid) - payment * (Math.pow(1 + r, monthsPaid) - 1) / r;
+}
+
+// ============ MAIN CALCULATION ============
+function calculate() {
+  const homePrice = +$('homePrice').value;
+  const downPct = +$('downPct').value / 100;
+  const mortgageRate = +$('mortgageRate').value / 100;
+  const amortYears = +$('amortYears').value;
+  const propTaxRate = +$('propTaxRate').value / 100;
+  const condoFees = +$('condoFees').value;
+  const homeInsurance = +$('homeInsurance').value;
+  const homeAppreciation = +$('homeAppreciation').value / 100;
+  const closingCosts = +$('closingCosts').value;
+  const isFirstTime = $('isFirstTimeBuyer').checked;
+
+  const monthlyRent = +$('monthlyRent').value;
+  const rentIncrease = +$('rentIncrease').value / 100;
+  const tenantInsurance = +$('tenantInsurance').value;
+
+  const investReturn = +$('investReturn').value / 100;
+  const timeHorizon = +$('timeHorizon').value;
+  const fhsaContrib = +$('fhsaContrib').value;
+  const taxRate = +$('taxRate').value / 100;
+
+  // ---- BUYING CALCULATIONS ----
+  const downPayment = homePrice * downPct;
+  const baseLoan = homePrice - downPayment;
+
+  // CMHC insurance if < 20% down
+  const needsCMHC = downPct < 0.20;
+  // CMHC only insures homes up to $1,000,000 with < 20% down
+  const cmhcPremium = (needsCMHC && homePrice <= 1000000) ? calcCMHCPremium(baseLoan, homePrice) : 0;
+  const totalMortgage = baseLoan + cmhcPremium;
+
+  // Ontario LTT
+  const ltt = calcOntarioLTT(homePrice);
+  const lttRebate = isFirstTime ? Math.min(ltt, 4000) : 0;
+  const netLTT = ltt - lttRebate;
+
+  // Stress test rate
+  const stressRate = Math.max(mortgageRate + 0.02, 0.0525);
+
+  // Monthly mortgage payment
+  const monthlyMortgage = calcMonthlyMortgage(totalMortgage, mortgageRate, amortYears);
+
+  // Upfront cost of buying
+  const upfrontBuy = downPayment + netLTT + closingCosts;
+
+  // FHSA tax savings (benefit for buyer while saving for down payment - shown as info)
+  const fhsaTaxSaving = fhsaContrib * taxRate;
+
+  // ---- YEAR-BY-YEAR PROJECTION ----
+  const buyerData = [];
+  const renterData = [];
+
+  let renterPortfolio = upfrontBuy; // Renter invests the equivalent of down payment + closing costs
+  let currentRent = monthlyRent;
+
+  for (let year = 0; year <= timeHorizon; year++) {
+    if (year === 0) {
+      // Year 0: Starting point
+      buyerData.push({
+        year,
+        homeValue: homePrice,
+        mortgageBalance: totalMortgage,
+        equity: homePrice - totalMortgage,
+        netWorth: homePrice - totalMortgage - netLTT - closingCosts,
+        totalSpent: upfrontBuy,
+        monthlyPayment: monthlyMortgage + (homePrice * propTaxRate / 12) + condoFees + (homeInsurance / 12),
+        mortgagePayment: monthlyMortgage,
+        propTax: homePrice * propTaxRate / 12,
+        maintenance: condoFees,
+        insurance: homeInsurance / 12,
+      });
+
+      renterData.push({
+        year,
+        portfolio: renterPortfolio,
+        netWorth: renterPortfolio,
+        monthlyRent: currentRent,
+        monthlyCost: currentRent + tenantInsurance,
+        totalSpent: 0,
+      });
+      continue;
+    }
+
+    // BUYER for this year
+    const monthsElapsed = year * 12;
+    const currentHomeValue = homePrice * Math.pow(1 + homeAppreciation, year);
+    const currentBalance = Math.max(0, getMortgageBalance(totalMortgage, mortgageRate, amortYears, monthsElapsed));
+    const buyerEquity = currentHomeValue - currentBalance;
+
+    const annualPropTax = currentHomeValue * propTaxRate;
+    const buyerMonthly = monthlyMortgage + (annualPropTax / 12) + condoFees + (homeInsurance / 12);
+
+    // Selling costs (5% commission) if they were to sell
+    const sellingCosts = currentHomeValue * 0.05;
+    const buyerNetWorth = currentHomeValue - currentBalance - sellingCosts;
+
+    buyerData.push({
+      year,
+      homeValue: currentHomeValue,
+      mortgageBalance: currentBalance,
+      equity: buyerEquity,
+      netWorth: buyerNetWorth,
+      monthlyPayment: buyerMonthly,
+      mortgagePayment: monthlyMortgage,
+      propTax: annualPropTax / 12,
+      maintenance: condoFees,
+      insurance: homeInsurance / 12,
+    });
+
+    // RENTER for this year
+    currentRent = monthlyRent * Math.pow(1 + rentIncrease, year);
+    const renterMonthlyCost = currentRent + tenantInsurance;
+
+    // Monthly savings: if buying costs more, renter invests the difference
+    const monthlySavings = buyerMonthly - renterMonthlyCost;
+
+    // Grow portfolio with investment return
+    renterPortfolio = renterPortfolio * (1 + investReturn);
+
+    // If renter is spending less monthly, invest the difference
+    if (monthlySavings > 0) {
+      // Invest monthly savings over the year (simplified: lump sum mid-year approximation)
+      renterPortfolio += monthlySavings * 12 * (1 + investReturn / 2);
+    } else {
+      // Renter pays more â draw from portfolio or count as additional cost
+      renterPortfolio += monthlySavings * 12; // negative = spending more
+    }
+
+    renterData.push({
+      year,
+      portfolio: Math.max(0, renterPortfolio),
+      netWorth: Math.max(0, renterPortfolio),
+      monthlyRent: currentRent,
+      monthlyCost: renterMonthlyCost,
+    });
+  }
+
+  // ---- RENDER RESULTS ----
+  const finalBuyNW = buyerData[timeHorizon].netWorth;
+  const finalRentNW = renterData[timeHorizon].netWorth;
+  const diff = finalBuyNW - finalRentNW;
+
+  const verdictEl = $('verdictText');
+  const verdictSub = $('verdictSub');
+
+  if (Math.abs(diff) < 5000) {
+    verdictEl.textContent = 'It\'s Roughly a Tie';
+    verdictEl.className = 'verdict verdict-tie';
+    verdictSub.textContent = `After ${timeHorizon} years, buying and renting produce very similar outcomes (within ${fmt(Math.abs(diff))}).`;
+  } else if (diff > 0) {
+    verdictEl.textContent = `Buying Wins by ${fmt(diff)}`;
+    verdictEl.className = 'verdict verdict-buy';
+    verdictSub.textContent = `After ${timeHorizon} years, buying builds ${fmt(diff)} more net worth than renting + investing.`;
+  } else {
+    verdictEl.textContent = `Renting + Investing Wins by ${fmt(Math.abs(diff))}`;
+    verdictEl.className = 'verdict verdict-rent';
+    verdictSub.textContent = `After ${timeHorizon} years, renting and investing the savings builds ${fmt(Math.abs(diff))} more net worth.`;
+  }
+
+  // Summary cards
+  $('summaryGrid').innerHTML = `
+    <div class="summary-card">
+      <div class="label">Buyer Net Worth (Yr ${timeHorizon})</div>
+      <div class="value" style="color:var(--green)">${fmt(finalBuyNW)}</div>
+      <div class="sub">Home value: ${fmt(buyerData[timeHorizon].homeValue)}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Renter Net Worth (Yr ${timeHorizon})</div>
+      <div class="value" style="color:var(--red)">${fmt(finalRentNW)}</div>
+      <div class="sub">Investment portfolio</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Monthly Mortgage + Costs</div>
+      <div class="value">${fmt(buyerData[1].monthlyPayment)}</div>
+      <div class="sub">Mortgage: ${fmt(monthlyMortgage)}/mo</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Current Monthly Rent</div>
+      <div class="value">${fmt(monthlyRent)}</div>
+      <div class="sub">Year ${timeHorizon}: ${fmt(renterData[timeHorizon].monthlyRent)}/mo</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Upfront Cost to Buy</div>
+      <div class="value">${fmt(upfrontBuy)}</div>
+      <div class="sub">Down: ${fmt(downPayment)} + LTT: ${fmt(netLTT)}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Stress Test Rate</div>
+      <div class="value">${pct(stressRate * 100)}</div>
+      <div class="sub">Qualifying payment: ${fmt(calcMonthlyMortgage(totalMortgage, stressRate, amortYears))}/mo</div>
+    </div>
+  `;
+
+  // ---- CHART ----
+  renderChart(buyerData, renterData);
+
+  // ---- TABLES ----
+  renderNetWorthTable(buyerData, renterData);
+  renderMonthlyTable(buyerData, renterData);
+  renderOntarioDetails({
+    homePrice, downPayment, downPct, baseLoan, cmhcPremium, needsCMHC,
+    totalMortgage, ltt, lttRebate, netLTT, stressRate, monthlyMortgage,
+    fhsaContrib, fhsaTaxSaving, closingCosts, isFirstTime, amortYears
+  });
+}
+
+// ============ CHART ============
+let mainChart = null;
+function renderChart(buyerData, renterData) {
+  const ctx = $('mainChart').getContext('2d');
+  if (mainChart) mainChart.destroy();
+
+  mainChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: buyerData.map(d => `Year ${d.year}`),
+      datasets: [
+        {
+          label: 'Buyer Net Worth',
+          data: buyerData.map(d => Math.round(d.netWorth)),
+          borderColor: '#27ae60',
+          backgroundColor: 'rgba(39,174,96,0.1)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 3,
+          pointRadius: 3,
+        },
+        {
+          label: 'Renter Net Worth (Invested)',
+          data: renterData.map(d => Math.round(d.netWorth)),
+          borderColor: '#e74c3c',
+          backgroundColor: 'rgba(231,76,60,0.1)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 3,
+          pointRadius: 3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`
+          }
+        },
+        legend: { position: 'top' }
+      },
+      scales: {
+        y: {
+          ticks: { callback: v => fmt(v) },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// ============ TABLES ============
+function renderNetWorthTable(buyerData, renterData) {
+  let html = `<thead><tr>
+    <th>Year</th><th>Home Value</th><th>Mortgage Bal.</th><th>Buyer Net Worth</th>
+    <th>Renter Portfolio</th><th>Renter Net Worth</th><th>Difference</th>
+  </tr></thead><tbody>`;
+
+  for (let i = 0; i < buyerData.length; i++) {
+    const diff = buyerData[i].netWorth - renterData[i].netWorth;
+    const color = diff > 0 ? 'var(--green)' : diff < 0 ? 'var(--red)' : 'inherit';
+    html += `<tr>
+      <td>Year ${buyerData[i].year}</td>
+      <td>${fmt(buyerData[i].homeValue)}</td>
+      <td>${fmt(buyerData[i].mortgageBalance)}</td>
+      <td><strong>${fmt(buyerData[i].netWorth)}</strong></td>
+      <td>${fmt(renterData[i].portfolio)}</td>
+      <td><strong>${fmt(renterData[i].netWorth)}</strong></td>
+      <td style="color:${color};font-weight:700">${diff >= 0 ? '+' : ''}${fmt(diff)}</td>
+    </tr>`;
+  }
+  html += '</tbody>';
+  $('netWorthTable').innerHTML = html;
+}
+
+function renderMonthlyTable(buyerData, renterData) {
+  let html = `<thead><tr>
+    <th>Year</th><th>Mortgage</th><th>Prop. Tax</th><th>Condo/Maint.</th><th>Insurance</th>
+    <th>Total Buy/mo</th><th>Rent/mo</th><th>Tenant Ins.</th><th>Total Rent/mo</th><th>Monthly Diff</th>
+  </tr></thead><tbody>`;
+
+  for (let i = 1; i < buyerData.length; i++) {
+    const diff = buyerData[i].monthlyPayment - renterData[i].monthlyCost;
+    const color = diff > 0 ? 'var(--red)' : 'var(--green)';
+    html += `<tr>
+      <td>Year ${buyerData[i].year}</td>
+      <td>${fmt(buyerData[i].mortgagePayment)}</td>
+      <td>${fmt(buyerData[i].propTax)}</td>
+      <td>${fmt(buyerData[i].maintenance)}</td>
+      <td>${fmt(buyerData[i].insurance)}</td>
+      <td><strong>${fmt(buyerData[i].monthlyPayment)}</strong></td>
+      <td>${fmt(renterData[i].monthlyRent)}</td>
+      <td>${fmt(+$('tenantInsurance').value)}</td>
+      <td><strong>${fmt(renterData[i].monthlyCost)}</strong></td>
+      <td style="color:${color};font-weight:700">${diff >= 0 ? '+' : ''}${fmt(diff)}</td>
+    </tr>`;
+  }
+  html += '</tbody>';
+  $('monthlyTable').innerHTML = html;
+}
+
+function renderOntarioDetails(d) {
+  $('ontarioDetails').innerHTML = `
+    <div class="two-col">
+      <div>
+        <h4 style="margin-bottom:12px;font-size:1rem;">Ontario Land Transfer Tax</h4>
+        <table class="breakdown-table">
+          <tr><td>Purchase Price</td><td>${fmt(d.homePrice)}</td></tr>
+          <tr><td>Gross LTT</td><td>${fmt(d.ltt)}</td></tr>
+          <tr><td>First-Time Buyer Rebate</td><td style="color:var(--green)">-${fmt(d.lttRebate)}</td></tr>
+          <tr><td><strong>Net LTT Payable</strong></td><td><strong>${fmt(d.netLTT)}</strong></td></tr>
+        </table>
+
+        <h4 style="margin:18px 0 12px;font-size:1rem;">CMHC Mortgage Insurance</h4>
+        <table class="breakdown-table">
+          <tr><td>Down Payment</td><td>${fmt(d.downPayment)} (${(d.downPct*100).toFixed(1)}%)</td></tr>
+          <tr><td>Base Mortgage</td><td>${fmt(d.baseLoan)}</td></tr>
+          <tr><td>CMHC Required?</td><td>${d.needsCMHC ? (d.homePrice > 1000000 ? 'N/A (price > $1M)' : 'Yes') : 'No'}</td></tr>
+          <tr><td>CMHC Premium</td><td>${fmt(d.cmhcPremium)}</td></tr>
+          <tr><td><strong>Total Mortgage</strong></td><td><strong>${fmt(d.totalMortgage)}</strong></td></tr>
+        </table>
+      </div>
+      <div>
+        <h4 style="margin-bottom:12px;font-size:1rem;">Mortgage Stress Test</h4>
+        <table class="breakdown-table">
+          <tr><td>Your Rate</td><td>${pct(+$('mortgageRate').value)}</td></tr>
+          <tr><td>Your Rate + 2%</td><td>${pct(+$('mortgageRate').value + 2)}</td></tr>
+          <tr><td>Floor Rate</td><td>5.25%</td></tr>
+          <tr><td><strong>Qualifying Rate</strong></td><td><strong>${pct(d.stressRate * 100)}</strong></td></tr>
+          <tr><td>Qualifying Payment</td><td>${fmt(calcMonthlyMortgage(d.totalMortgage, d.stressRate, d.amortYears))}/mo</td></tr>
+        </table>
+
+        <h4 style="margin:18px 0 12px;font-size:1rem;">First Home Savings Account (FHSA)</h4>
+        <table class="breakdown-table">
+          <tr><td>Annual Contribution</td><td>${fmt(d.fhsaContrib)}</td></tr>
+          <tr><td>Lifetime Maximum</td><td>$40,000</td></tr>
+          <tr><td>Marginal Tax Rate</td><td>${pct(+$('taxRate').value)}</td></tr>
+          <tr><td><strong>Annual Tax Savings</strong></td><td style="color:var(--green)"><strong>${fmt(d.fhsaTaxSaving)}</strong></td></tr>
+        </table>
+
+        <h4 style="margin:18px 0 12px;font-size:1rem;">Upfront Costs Summary</h4>
+        <table class="breakdown-table">
+          <tr><td>Down Payment</td><td>${fmt(d.downPayment)}</td></tr>
+          <tr><td>Net Land Transfer Tax</td><td>${fmt(d.netLTT)}</td></tr>
+          <tr><td>Closing Costs</td><td>${fmt(d.closingCosts)}</td></tr>
+          <tr><td><strong>Total Upfront</strong></td><td><strong>${fmt(d.downPayment + d.netLTT + d.closingCosts)}</strong></td></tr>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ============ UI WIRING ============
+const sliders = [
+  ['homePrice', v => fmt(v)],
+  ['downPct', v => v + '%'],
+  ['mortgageRate', v => v + '%'],
+  ['amortYears', v => v + ' yrs'],
+  ['propTaxRate', v => v + '%'],
+  ['condoFees', v => fmt(v) + '/mo'],
+  ['homeInsurance', v => fmt(v) + '/yr'],
+  ['homeAppreciation', v => v + '%'],
+  ['closingCosts', v => fmt(v)],
+  ['monthlyRent', v => fmt(v) + '/mo'],
+  ['rentIncrease', v => v + '%'],
+  ['tenantInsurance', v => fmt(v) + '/mo'],
+  ['investReturn', v => v + '%'],
+  ['timeHorizon', v => v + ' years'],
+  ['fhsaContrib', v => fmt(v) + '/yr'],
+  ['taxRate', v => v + '%'],
+];
+
+sliders.forEach(([id, formatter]) => {
+  const el = $(id);
+  const valEl = $(id + 'Val');
+  const update = () => { valEl.textContent = formatter(el.value); };
+  update();
+  el.addEventListener('input', () => { update(); calculate(); });
+});
+
+$('isFirstTimeBuyer').addEventListener('change', calculate);
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    $(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Initial calculation
+calculate();
+</script>
+</body>
+</html>
