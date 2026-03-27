@@ -443,7 +443,7 @@
 
   <!-- CHART + TABLE -->
   <div class="chart-container">
-    <h3>Net Worth Projection: Buying vs. Renting + Investing</h3>
+    <h3>Buyer Equity vs. Total Rent Spent</h3>
     <div class="chart-wrapper">
       <canvas id="mainChart"></canvas>
     </div>
@@ -751,7 +751,7 @@ function renderChart(buyerData, renterData) {
       labels: buyerData.map(d => `Year ${d.year}`),
       datasets: [
         {
-          label: 'Buyer Net Worth',
+          label: 'Buyer (Equity Built)',
           data: buyerData.map(d => Math.round(d.netWorth)),
           borderColor: '#27ae60',
           backgroundColor: 'rgba(39,174,96,0.1)',
@@ -761,8 +761,8 @@ function renderChart(buyerData, renterData) {
           pointRadius: 3,
         },
         {
-          label: 'Total Rent Paid',
-          data: renterData.map(d => Math.round(d.totalRentPaid)),
+          label: 'Renter (Total Rent Lost)',
+          data: renterData.map(d => Math.round(-d.totalRentPaid)),
           borderColor: '#e74c3c',
           backgroundColor: 'rgba(231,76,60,0.1)',
           fill: true,
