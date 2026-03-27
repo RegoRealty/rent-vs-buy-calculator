@@ -430,25 +430,6 @@
         </div>
       </div>
 
-      <div class="field">
-        <label>FHSA Contribution (Annual, up to $8,000)</label>
-        <div class="field-row">
-          <input type="range" id="fhsaContrib" min="0" max="8000" step="500" value="8000">
-          <span class="val" id="fhsaContribVal"></span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Marginal Tax Rate (%)</label>
-        <div class="field-row">
-          <input type="range" id="taxRate" min="20" max="53" step="0.5" value="33">
-          <span class="val" id="taxRateVal"></span>
-        </div>
-      </div>
-
-      <div class="info-note">
-        <strong>FHSA:</strong> The First Home Savings Account allows first-time buyers to save up to $8,000/year (lifetime max $40,000) tax-free. Contributions are tax-deductible, and withdrawals for a qualifying home purchase are tax-free.
-      </div>
     </div>
   </div>
 
@@ -589,8 +570,6 @@ function calculate() {
   const renterParking = +$('renterParking').value;
 
   const timeHorizon = +$('timeHorizon').value;
-  const fhsaContrib = +$('fhsaContrib').value;
-  const taxRate = +$('taxRate').value / 100;
 
   // ---- BUYING CALCULATIONS ----
   const downPayment = homePrice * downPct;
@@ -618,9 +597,6 @@ function calculate() {
 
   // Upfront cost of buying
   const upfrontBuy = downPayment + netLTT + closingCosts + hstData.netHST;
-
-  // FHSA tax savings (benefit for buyer while saving for down payment - shown as info)
-  const fhsaTaxSaving = fhsaContrib * taxRate;
 
   // ---- YEAR-BY-YEAR PROJECTION ----
   const buyerData = [];
@@ -760,7 +736,7 @@ function calculate() {
   renderOntarioDetails({
     homePrice, downPayment, downPct, baseLoan, cmhcPremium, needsCMHC,
     totalMortgage, ltt, lttRebate, netLTT, stressRate, monthlyMortgage,
-    fhsaContrib, fhsaTaxSaving, closingCosts, isFirstTime, isNewBuild, hstData, amortYears
+    closingCosts, isFirstTime, isNewBuild, hstData, amortYears
   });
 }
 
@@ -901,14 +877,6 @@ function renderOntarioDetails(d) {
           <tr><td>Qualifying Payment</td><td>${fmt(calcMonthlyMortgage(d.totalMortgage, d.stressRate, d.amortYears))}/mo</td></tr>
         </table>
 
-        <h4 style="margin:18px 0 12px;font-size:1rem;">First Home Savings Account (FHSA)</h4>
-        <table class="breakdown-table">
-          <tr><td>Annual Contribution</td><td>${fmt(d.fhsaContrib)}</td></tr>
-          <tr><td>Lifetime Maximum</td><td>$40,000</td></tr>
-          <tr><td>Marginal Tax Rate</td><td>${pct(+$('taxRate').value)}</td></tr>
-          <tr><td><strong>Annual Tax Savings</strong></td><td style="color:var(--green)"><strong>${fmt(d.fhsaTaxSaving)}</strong></td></tr>
-        </table>
-
         ${d.isNewBuild ? `
         <h4 style="margin:18px 0 12px;font-size:1rem;">New Build HST (13%)</h4>
         <table class="breakdown-table">
@@ -948,8 +916,6 @@ const sliders = [
   ['renterUtilities', v => fmt(v) + '/mo'],
   ['renterParking', v => fmt(v) + '/mo'],
   ['timeHorizon', v => v + ' years'],
-  ['fhsaContrib', v => fmt(v) + '/yr'],
-  ['taxRate', v => v + '%'],
 ];
 
 sliders.forEach(([id, formatter]) => {
