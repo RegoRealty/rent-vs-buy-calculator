@@ -158,10 +158,29 @@
 
   .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
     margin: 20px 0;
   }
+  @media (max-width: 700px) {
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+  .summary-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .summary-column-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .summary-column-header.buy { background: rgba(39,174,96,0.12); color: var(--green); }
+  .summary-column-header.rent { background: rgba(231,76,60,0.12); color: var(--red); }
   .summary-card {
     background: var(--bg);
     border-radius: 10px;
@@ -403,7 +422,7 @@
         <strong>Ontario Guideline:</strong> The 2025 Ontario rent increase guideline is 2.5%. Landlords can only increase rent once every 12 months. Units first occupied after Nov 15, 2018 are exempt from guidelines.
       </div>
 
-            <div class="field">
+      <div class="field" style="margin-top:18px">
         <label>Time Horizon (Years)</label>
         <div class="field-row">
           <input type="range" id="timeHorizon" min="1" max="30" step="1" value="10">
@@ -694,35 +713,41 @@ function calculate() {
 
   // Summary cards
   $('summaryGrid').innerHTML = `
-    <div class="summary-card">
-      <div class="label">Buyer Net Equity (Yr ${timeHorizon})</div>
-      <div class="value" style="color:var(--green)">${fmt(finalBuyNW)}</div>
-      <div class="sub">Home value: ${fmt(buyerData[timeHorizon].homeValue)}</div>
+    <div class="summary-column">
+      <div class="summary-column-header buy">Buying</div>
+      <div class="summary-card">
+        <div class="label">Net Equity (Yr ${timeHorizon})</div>
+        <div class="value" style="color:var(--green)">${fmt(finalBuyNW)}</div>
+        <div class="sub">Home value: ${fmt(buyerData[timeHorizon].homeValue)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Monthly Mortgage + Costs</div>
+        <div class="value">${fmt(buyerData[1].monthlyPayment)}</div>
+        <div class="sub">Mortgage: ${fmt(monthlyMortgage)}/mo</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Upfront Cost to Buy</div>
+        <div class="value">${fmt(upfrontBuy)}</div>
+        <div class="sub">Down: ${fmt(downPayment)} + LTT: ${fmt(netLTT)}${isNewBuild ? ' + HST: ' + fmt(hstData.netHST) : ''}</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Stress Test Rate</div>
+        <div class="value">${pct(stressRate * 100)}</div>
+        <div class="sub">Qualifying: ${fmt(calcMonthlyMortgage(totalMortgage, stressRate, amortYears))}/mo</div>
+      </div>
     </div>
-    <div class="summary-card">
-      <div class="label">Total Rent Paid (Yr ${timeHorizon})</div>
-      <div class="value" style="color:var(--red)">${fmt(finalTotalRent)}</div>
-      <div class="sub">No equity built</div>
-    </div>
-    <div class="summary-card">
-      <div class="label">Monthly Mortgage + Costs</div>
-      <div class="value">${fmt(buyerData[1].monthlyPayment)}</div>
-      <div class="sub">Mortgage: ${fmt(monthlyMortgage)}/mo</div>
-    </div>
-    <div class="summary-card">
-      <div class="label">Current Monthly Rent + Costs</div>
-      <div class="value">${fmt(renterData[0].monthlyCost)}</div>
-      <div class="sub">Year ${timeHorizon}: ${fmt(renterData[timeHorizon].monthlyCost)}/mo</div>
-    </div>
-    <div class="summary-card">
-      <div class="label">Upfront Cost to Buy</div>
-      <div class="value">${fmt(upfrontBuy)}</div>
-      <div class="sub">Down: ${fmt(downPayment)} + LTT: ${fmt(netLTT)}${isNewBuild ? ' + HST: ' + fmt(hstData.netHST) : ''}</div>
-    </div>
-    <div class="summary-card">
-      <div class="label">Stress Test Rate</div>
-      <div class="value">${pct(stressRate * 100)}</div>
-      <div class="sub">Qualifying payment: ${fmt(calcMonthlyMortgage(totalMortgage, stressRate, amortYears))}/mo</div>
+    <div class="summary-column">
+      <div class="summary-column-header rent">Renting</div>
+      <div class="summary-card">
+        <div class="label">Total Rent Paid (Yr ${timeHorizon})</div>
+        <div class="value" style="color:var(--red)">${fmt(finalTotalRent)}</div>
+        <div class="sub">No equity built</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Current Monthly Rent + Costs</div>
+        <div class="value">${fmt(renterData[0].monthlyCost)}</div>
+        <div class="sub">Year ${timeHorizon}: ${fmt(renterData[timeHorizon].monthlyCost)}/mo</div>
+      </div>
     </div>
   `;
 
