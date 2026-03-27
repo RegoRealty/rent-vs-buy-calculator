@@ -950,7 +950,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Initial calculate();
+// Initial calculation - wait for Chart.js if needed
+if (typeof Chart !== 'undefined') {
+  calculate();
+} else {
+  const s = document.querySelector('script[src*="Chart"]');
+  if (s) s.addEventListener('load', calculate);
+  else window.addEventListener('load', calculate);
+}
 </script>
 </body>
 </html>
