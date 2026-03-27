@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ontario Rent vs. Buy Calculator</title>
+<title>Ontario Rent vs. Buy Calculator â Corcoran Horizon Realty</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
@@ -252,8 +252,8 @@
 <body>
 
 <div class="header">
-  <h1>Ontario: Rent vs. First-Time Home Buyer</h1>
-  <p>Compare the true cost of renting versus buying over time &mdash; with Ontario-specific tax rules &amp; incentives</p>
+  <h1>Ontario: Rent vs. Buy Calculator</h1>
+  <p>Compare the true cost of renting versus buying over time &mdash; with Ontario-specific taxes, HST on new builds &amp; incentives</p>
 </div>
 
 <div class="container">
@@ -290,103 +290,120 @@
       </div>
 
       <div class="field">
-        <label>Amortization Period</label>
+        <label>Amortization Period (Years)</label>
         <div class="field-row">
-          <input type="range" id="amortYears" min="5" max="30" step="5" value="25">
+          <input type="range" id="amortYears" min="10" max="30" step="5" value="25">
           <span class="val" id="amortYearsVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Property Tax Rate (% of home value)</label>
+        <label>Annual Property Tax Rate (%)</label>
         <div class="field-row">
-          <input type="range" id="propTaxRate" min="0.4" max="2" step="0.05" value="1.1">
+          <input type="range" id="propTaxRate" min="0.3" max="2" step="0.05" value="1.0">
           <span class="val" id="propTaxRateVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Condo Fees / Maintenance</label>
+        <label>Monthly Condo Fees / Maintenance</label>
         <div class="field-row">
-          <input type="range" id="condoFees" min="0" max="1500" step="25" value="300">
+          <input type="range" id="condoFees" min="0" max="1500" step="25" value="350">
           <span class="val" id="condoFeesVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Home Insurance (Annual)</label>
+        <label>Annual Home Insurance</label>
         <div class="field-row">
-          <input type="range" id="homeInsurance" min="600" max="5000" step="50" value="1800">
+          <input type="range" id="homeInsurance" min="500" max="5000" step="50" value="1800">
           <span class="val" id="homeInsuranceVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Home Appreciation Rate</label>
+        <label>Annual Home Appreciation (%)</label>
         <div class="field-row">
-          <input type="range" id="homeAppreciation" min="0" max="10" step="0.25" value="3">
+          <input type="range" id="homeAppreciation" min="-2" max="8" step="0.25" value="3.0">
           <span class="val" id="homeAppreciationVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Closing Costs</label>
+        <label>Closing Costs (Lawyer, Inspection, etc.)</label>
         <div class="field-row">
-          <input type="range" id="closingCosts" min="1000" max="15000" step="500" value="5000">
+          <input type="range" id="closingCosts" min="0" max="20000" step="500" value="5000">
           <span class="val" id="closingCostsVal"></span>
         </div>
       </div>
 
       <div class="toggle-row">
-        <input type="checkbox" id="isFirstTimeBuyer" checked>
-        <label for="isFirstTimeBuyer" style="margin:0;text-transform:none;font-size:0.9rem;color:var(--text)">
-          First-time home buyer? (LTT rebate up to $4,000)
-        </label>
+        <input type="checkbox" id="isFirstTimeBuyer">
+        <label for="isFirstTimeBuyer" style="margin:0;text-transform:none;font-size:0.9rem;color:var(--text)">First-time home buyer? (LTT rebate up to $4,000)</label>
+      </div>
+
+      <div class="toggle-row">
+        <input type="checkbox" id="isNewBuild">
+        <label for="isNewBuild" style="margin:0;text-transform:none;font-size:0.9rem;color:var(--text)">New construction / pre-build? (13% HST applies, with rebates)</label>
       </div>
 
       <div class="info-note">
-        <strong>CMHC Insurance:</strong> Automatically calculated if down payment &lt; 20% (max home price $1,000,000).<br>
-        <strong>Stress Test:</strong> Qualifying rate = higher of your rate + 2% or 5.25%.
+        <strong>Ontario LTT:</strong> Calculated automatically. First-time buyers get up to $4,000 rebate.<br>
+        <strong>CMHC Insurance:</strong> Required if down payment &lt; 20%. Added to mortgage automatically.<br>
+        <strong>Stress Test:</strong> Qualification rate = your rate + 2% or 5.25%, whichever is higher.<br>
+        <strong>New Build HST:</strong> New homes are subject to 13% HST. Buyers may qualify for the NHRP â up to $6,300 federal (GST) + up to $24,000 provincial (Ontario) if price &lt; $450K. Partial provincial rebate for $450Kâ$600K range. No rebate above $600K.
       </div>
     </div>
 
     <!-- RENTING INPUTS -->
     <div class="card">
-      <div class="card-title"><span class="icon icon-rent">&#127972;</span> Renting Inputs</div>
+      <div class="card-title"><span class="icon icon-rent">&#127970;</span> Renting Inputs</div>
 
       <div class="field">
         <label>Monthly Rent</label>
         <div class="field-row">
-          <input type="range" id="monthlyRent" min="500" max="5000" step="25" value="2000">
+          <input type="range" id="monthlyRent" min="500" max="5000" step="25" value="2200">
           <span class="val" id="monthlyRentVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Annual Rent Increase</label>
+        <label>Annual Rent Increase (%)</label>
         <div class="field-row">
-          <input type="range" id="rentIncrease" min="0" max="8" step="0.25" value="2.5">
+          <input type="range" id="rentIncrease" min="0" max="8" step="0.1" value="2.5">
           <span class="val" id="rentIncreaseVal"></span>
         </div>
       </div>
 
       <div class="field">
-        <label>Tenant Insurance</label>
+        <label>Tenant Insurance (Monthly)</label>
         <div class="field-row">
-          <input type="range" id="tenantInsurance" min="0" max="200" step="5" value="40">
+          <input type="range" id="tenantInsurance" min="10" max="100" step="5" value="30">
           <span class="val" id="tenantInsuranceVal"></span>
         </div>
       </div>
 
-      <div class="card-title" style="margin-top:16px"><span class="icon icon-shared">&#9881;</span> Shared Assumptions</div>
-
       <div class="field">
-        <label>Investment Return (Renter Portfolio)</label>
+        <label>Utilities â Water, Gas, Heat, Hydro (Monthly)</label>
         <div class="field-row">
-          <input type="range" id="investReturn" min="0" max="12" step="0.25" value="6">
-          <span class="val" id="investReturnVal"></span>
+          <input type="range" id="renterUtilities" min="0" max="500" step="10" value="150">
+          <span class="val" id="renterUtilitiesVal"></span>
         </div>
       </div>
+
+      <div class="field">
+        <label>Parking &amp; Locker (Monthly)</label>
+        <div class="field-row">
+          <input type="range" id="renterParking" min="0" max="400" step="10" value="100">
+          <span class="val" id="renterParkingVal"></span>
+        </div>
+      </div>
+
+      <div class="info-note">
+        <strong>Ontario Guideline:</strong> The 2025 Ontario rent increase guideline is 2.5%. Landlords can only increase rent once every 12 months. Units first occupied after Nov 15, 2018 are exempt from guidelines.
+      </div>
+
+      <div class="card-title" style="margin-top:24px"><span class="icon icon-shared">&#9881;</span> Shared Assumptions</div>
 
       <div class="field">
         <label>Time Horizon (Years)</label>
@@ -397,7 +414,7 @@
       </div>
 
       <div class="field">
-        <label>FHSA Annual Contribution</label>
+        <label>FHSA Contribution (Annual, up to $8,000)</label>
         <div class="field-row">
           <input type="range" id="fhsaContrib" min="0" max="8000" step="500" value="8000">
           <span class="val" id="fhsaContribVal"></span>
@@ -405,80 +422,89 @@
       </div>
 
       <div class="field">
-        <label>Marginal Tax Rate</label>
+        <label>Marginal Tax Rate (%)</label>
         <div class="field-row">
-          <input type="range" id="taxRate" min="15" max="53" step="0.5" value="29.65">
+          <input type="range" id="taxRate" min="20" max="53" step="0.5" value="33">
           <span class="val" id="taxRateVal"></span>
         </div>
       </div>
 
       <div class="info-note">
-        <strong>FHSA:</strong> First Home Savings Account &mdash; contributions are tax-deductible (like RRSP) and withdrawals are tax-free (like TFSA) for a first home. Max $8,000/yr, $40,000 lifetime.
+        <strong>FHSA:</strong> The First Home Savings Account allows first-time buyers to save up to $8,000/year (lifetime max $40,000) tax-free. Contributions are tax-deductible, and withdrawals for a qualifying home purchase are tax-free.
       </div>
     </div>
-
   </div>
 
-  <!-- RESULTS -->
-  <div class="result-banner">
-    <div class="card-title" style="justify-content:center"><span class="icon icon-result">&#128200;</span> Results</div>
-    <div class="verdict" id="verdictText"></div>
+  <!-- RESULTS BANNER -->
+  <div class="result-banner" id="resultBanner">
+    <div class="verdict" id="verdictText">Calculating...</div>
     <div class="subtitle" id="verdictSub"></div>
+
     <div class="summary-grid" id="summaryGrid"></div>
   </div>
 
-  <!-- CHART -->
+  <!-- CHART + TABLE -->
   <div class="chart-container">
-    <h3>Net Worth Projection</h3>
+    <h3>Net Worth Projection: Buying vs. Renting + Investing</h3>
     <div class="chart-wrapper">
       <canvas id="mainChart"></canvas>
     </div>
   </div>
 
-  <!-- TABLES -->
-  <div class="chart-container">
+  <div class="card" style="margin-bottom:24px">
     <div class="tabs">
-      <button class="tab-btn active" data-tab="tabNetWorth">Net Worth Table</button>
+      <button class="tab-btn active" data-tab="tabNetWorth">Net Worth</button>
       <button class="tab-btn" data-tab="tabMonthly">Monthly Costs</button>
       <button class="tab-btn" data-tab="tabOntario">Ontario Details</button>
     </div>
+
     <div id="tabNetWorth" class="tab-content active">
-      <div class="table-scroll"><table class="breakdown-table" id="netWorthTable"></table></div>
+      <div class="table-scroll">
+        <table class="breakdown-table" id="netWorthTable"></table>
+      </div>
     </div>
+
     <div id="tabMonthly" class="tab-content">
-      <div class="table-scroll"><table class="breakdown-table" id="monthlyTable"></table></div>
+      <div class="table-scroll">
+        <table class="breakdown-table" id="monthlyTable"></table>
+      </div>
     </div>
+
     <div id="tabOntario" class="tab-content">
       <div id="ontarioDetails"></div>
     </div>
   </div>
 
   <div class="disclaimer">
-    <strong>Disclaimer:</strong> This calculator is for educational purposes only and does not constitute financial advice.
-    Actual costs may vary. Consult a licensed mortgage broker or financial advisor for personalized advice.<br>
-    Provided by <strong>Corcoran Horizon Realty â Ontario Real Estate Brokerage</strong>
+    <strong>Disclaimer:</strong> This calculator is for illustrative purposes only and does not constitute financial advice.
+    Actual costs may vary based on individual circumstances, lender requirements, and market conditions.
+    Consult a licensed mortgage professional and financial advisor before making purchasing decisions.<br>
+    &copy; Corcoran Horizon Realty &mdash; Ontario Real Estate Brokerage
   </div>
-
 </div>
 
 <script>
+// ============ HELPERS ============
 const $ = id => document.getElementById(id);
-const fmt = v => '$' + Math.round(v).toLocaleString();
-const pct = v => parseFloat(v).toFixed(2) + '%';
+const fmt = n => '$' + Math.round(n).toLocaleString('en-CA');
+const fmtD = n => '$' + n.toLocaleString('en-CA', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+const pct = n => n.toFixed(2) + '%';
 
-// ============ ONTARIO LTT CALCULATION ============
+// ============ ONTARIO TAX CALCULATIONS ============
 function calcOntarioLTT(price) {
-  if (price <= 55000) return price * 0.005;
-  if (price <= 250000) return 55000 * 0.005 + (price - 55000) * 0.01;
-  if (price <= 400000) return 55000 * 0.005 + 195000 * 0.01 + (price - 250000) * 0.015;
-  if (price <= 2000000) return 55000 * 0.005 + 195000 * 0.01 + 150000 * 0.015 + (price - 400000) * 0.02;
-  return 55000 * 0.005 + 195000 * 0.01 + 150000 * 0.015 + 1600000 * 0.02 + (price - 2000000) * 0.025;
+  let tax = 0;
+  if (price > 2000000) tax += (price - 2000000) * 0.025;
+  if (price > 400000) tax += (Math.min(price, 2000000) - 400000) * 0.02;
+  if (price > 250000) tax += (Math.min(price, 400000) - 250000) * 0.015;
+  if (price > 55000) tax += (Math.min(price, 250000) - 55000) * 0.01;
+  tax += Math.min(price, 55000) * 0.005;
+  return tax;
 }
 
-// ============ CMHC PREMIUM ============
 function calcCMHCPremium(loanAmt, homePrice) {
-  const ratio = (homePrice - (homePrice - loanAmt)) / homePrice;
-  // CMHC premium r atio <= 0.75) return loanAmt * 0.017;
+  const ratio = loanAmt / homePrice;
+  if (ratio <= 0.65) return loanAmt * 0.006;
+  if (ratio <= 0.75) return loanAmt * 0.017;
   if (ratio <= 0.80) return loanAmt * 0.024;
   if (ratio <= 0.85) return loanAmt * 0.028;
   if (ratio <= 0.90) return loanAmt * 0.031;
@@ -501,6 +527,30 @@ function getMortgageBalance(principal, annualRate, years, monthsPaid) {
   return principal * Math.pow(1 + r, monthsPaid) - payment * (Math.pow(1 + r, monthsPaid) - 1) / r;
 }
 
+// ============ NEW BUILD HST CALCULATION ============
+function calcNewBuildHST(price) {
+  const hst = price * 0.13;
+  // Federal GST rebate (5% portion): 36% rebate up to max $6,300 if price <= $350K
+  // Phases out between $350K-$450K, none above $450K
+  let gstRebate = 0;
+  const gstPaid = price * 0.05;
+  if (price <= 350000) {
+    gstRebate = Math.min(gstPaid * 0.36, 6300);
+  } else if (price < 450000) {
+    gstRebate = Math.min(gstPaid * 0.36, 6300) * (450000 - price) / 100000;
+  }
+  // Ontario PST rebate (8% portion): 75% rebate up to max $24,000 if price <= $400K
+  // No rebate above $400K
+  let pstRebate = 0;
+  const pstPaid = price * 0.08;
+  if (price <= 400000) {
+    pstRebate = Math.min(pstPaid * 0.75, 24000);
+  }
+  const totalRebate = gstRebate + pstRebate;
+  const netHST = hst - totalRebate;
+  return { hst, gstRebate, pstRebate, totalRebate, netHST };
+}
+
 // ============ MAIN CALCULATION ============
 function calculate() {
   const homePrice = +$('homePrice').value;
@@ -513,12 +563,14 @@ function calculate() {
   const homeAppreciation = +$('homeAppreciation').value / 100;
   const closingCosts = +$('closingCosts').value;
   const isFirstTime = $('isFirstTimeBuyer').checked;
+  const isNewBuild = $('isNewBuild').checked;
 
   const monthlyRent = +$('monthlyRent').value;
   const rentIncrease = +$('rentIncrease').value / 100;
   const tenantInsurance = +$('tenantInsurance').value;
+  const renterUtilities = +$('renterUtilities').value;
+  const renterParking = +$('renterParking').value;
 
-  const investReturn = +$('investReturn').value / 100;
   const timeHorizon = +$('timeHorizon').value;
   const fhsaContrib = +$('fhsaContrib').value;
   const taxRate = +$('taxRate').value / 100;
@@ -544,8 +596,11 @@ function calculate() {
   // Monthly mortgage payment
   const monthlyMortgage = calcMonthlyMortgage(totalMortgage, mortgageRate, amortYears);
 
+  // New Build HST
+  const hstData = isNewBuild ? calcNewBuildHST(homePrice) : { hst: 0, gstRebate: 0, pstRebate: 0, totalRebate: 0, netHST: 0 };
+
   // Upfront cost of buying
-  const upfrontBuy = downPayment + netLTT + closingCosts;
+  const upfrontBuy = downPayment + netLTT + closingCosts + hstData.netHST;
 
   // FHSA tax savings (benefit for buyer while saving for down payment - shown as info)
   const fhsaTaxSaving = fhsaContrib * taxRate;
@@ -554,8 +609,8 @@ function calculate() {
   const buyerData = [];
   const renterData = [];
 
-  let renterPortfolio = upfrontBuy; // Renter invests the equivalent of down payment + closing costs
   let currentRent = monthlyRent;
+  let totalRentPaid = 0;
 
   for (let year = 0; year <= timeHorizon; year++) {
     if (year === 0) {
@@ -576,11 +631,9 @@ function calculate() {
 
       renterData.push({
         year,
-        portfolio: renterPortfolio,
-        netWorth: renterPortfolio,
+        totalRentPaid: 0,
         monthlyRent: currentRent,
-        monthlyCost: currentRent + tenantInsurance,
-        totalSpent: 0,
+        monthlyCost: currentRent + tenantInsurance + renterUtilities + renterParking,
       });
       continue;
     }
@@ -614,26 +667,11 @@ function calculate() {
     // RENTER for this year
     currentRent = monthlyRent * Math.pow(1 + rentIncrease, year);
     const renterMonthlyCost = currentRent + tenantInsurance;
-
-    // Monthly savings: if buying costs more, renter invests the difference
-    const monthlySavings = buyerMonthly - renterMonthlyCost;
-
-    // Grow portfolio with investment return
-    renterPortfolio = renterPortfolio * (1 + investReturn);
-
-    // If renter is spending less monthly, invest the difference
-    if (monthlySavings > 0) {
-      // Invest monthly savings over the year (simplified: lump sum mid-year approximation)
-      renterPortfolio += monthlySavings * 12 * (1 + investReturn / 2);
-    } else {
-      // Renter pays more â draw from portfolio or count as additional cost
-      renterPortfolio += monthlySavings * 12; // negative = spending more
-    }
+    totalRentPaid += renterMonthlyCost * 12;
 
     renterData.push({
       year,
-      portfolio: Math.max(0, renterPortfolio),
-      netWorth: Math.max(0, renterPortfolio),
+      totalRentPaid: totalRentPaid,
       monthlyRent: currentRent,
       monthlyCost: renterMonthlyCost,
     });
@@ -641,37 +679,32 @@ function calculate() {
 
   // ---- RENDER RESULTS ----
   const finalBuyNW = buyerData[timeHorizon].netWorth;
-  const finalRentNW = renterData[timeHorizon].netWorth;
-  const diff = finalBuyNW - finalRentNW;
+  const finalTotalRent = renterData[timeHorizon].totalRentPaid;
 
   const verdictEl = $('verdictText');
   const verdictSub = $('verdictSub');
 
-  if (Math.abs(diff) < 5000) {
-    verdictEl.textContent = 'It\'s Roughly a Tie';
-    verdictEl.className = 'verdict verdict-tie';
-    verdictSub.textContent = `After ${timeHorizon} years, buying and renting produce very similar outcomes (within ${fmt(Math.abs(diff))}).`;
-  } else if (diff > 0) {
-    verdictEl.textContent = `Buying Wins by ${fmt(diff)}`;
+  if (finalBuyNW > 0) {
+    verdictEl.textContent = `Buying Builds ${fmt(finalBuyNW)} in Equity`;
     verdictEl.className = 'verdict verdict-buy';
-    verdictSub.textContent = `After ${timeHorizon} years, buying builds ${fmt(diff)} more net worth than renting + investing.`;
+    verdictSub.textContent = `After ${timeHorizon} years, the buyer has ${fmt(finalBuyNW)} in net equity (after selling costs). The renter has paid ${fmt(finalTotalRent)} in total rent with no equity.`;
   } else {
-    verdictEl.textContent = `Renting + Investing Wins by ${fmt(Math.abs(diff))}`;
+    verdictEl.textContent = `Buyer Underwater by ${fmt(Math.abs(finalBuyNW))}`;
     verdictEl.className = 'verdict verdict-rent';
-    verdictSub.textContent = `After ${timeHorizon} years, renting and investing the savings builds ${fmt(Math.abs(diff))} more net worth.`;
+    verdictSub.textContent = `After ${timeHorizon} years, the buyer owes more than the home is worth (after selling costs). The renter has paid ${fmt(finalTotalRent)} in total rent.`;
   }
 
   // Summary cards
   $('summaryGrid').innerHTML = `
     <div class="summary-card">
-      <div class="label">Buyer Net Worth (Yr ${timeHorizon})</div>
+      <div class="label">Buyer Net Equity (Yr ${timeHorizon})</div>
       <div class="value" style="color:var(--green)">${fmt(finalBuyNW)}</div>
       <div class="sub">Home value: ${fmt(buyerData[timeHorizon].homeValue)}</div>
     </div>
     <div class="summary-card">
-      <div class="label">Renter Net Worth (Yr ${timeHorizon})</div>
-      <div class="value" style="color:var(--red)">${fmt(finalRentNW)}</div>
-      <div class="sub">Investment portfolio</div>
+      <div class="label">Total Rent Paid (Yr ${timeHorizon})</div>
+      <div class="value" style="color:var(--red)">${fmt(finalTotalRent)}</div>
+      <div class="sub">No equity built</div>
     </div>
     <div class="summary-card">
       <div class="label">Monthly Mortgage + Costs</div>
@@ -686,7 +719,7 @@ function calculate() {
     <div class="summary-card">
       <div class="label">Upfront Cost to Buy</div>
       <div class="value">${fmt(upfrontBuy)}</div>
-      <div class="sub">Down: ${fmt(downPayment)} + LTT: ${fmt(netLTT)}</div>
+      <div class="sub">Down: ${fmt(downPayment)} + LTT: ${fmt(netLTT)}${isNewBuild ? ' + HST: ' + fmt(hstData.netHST) : ''}</div>
     </div>
     <div class="summary-card">
       <div class="label">Stress Test Rate</div>
@@ -704,7 +737,7 @@ function calculate() {
   renderOntarioDetails({
     homePrice, downPayment, downPct, baseLoan, cmhcPremium, needsCMHC,
     totalMortgage, ltt, lttRebate, netLTT, stressRate, monthlyMortgage,
-    fhsaContrib, fhsaTaxSaving, closingCosts, isFirstTime, amortYears
+    fhsaContrib, fhsaTaxSaving, closingCosts, isFirstTime, isNewBuild, hstData, amortYears
   });
 }
 
@@ -730,8 +763,8 @@ function renderChart(buyerData, renterData) {
           pointRadius: 3,
         },
         {
-          label: 'Renter Net Worth (Invested)',
-          data: renterData.map(d => Math.round(d.netWorth)),
+          label: 'Total Rent Paid',
+          data: renterData.map(d => Math.round(d.totalRentPaid)),
           borderColor: '#e74c3c',
           backgroundColor: 'rgba(231,76,60,0.1)',
           fill: true,
@@ -769,21 +802,18 @@ function renderChart(buyerData, renterData) {
 // ============ TABLES ============
 function renderNetWorthTable(buyerData, renterData) {
   let html = `<thead><tr>
-    <th>Year</th><th>Home Value</th><th>Mortgage Bal.</th><th>Buyer Net Worth</th>
-    <th>Renter Portfolio</th><th>Renter Net Worth</th><th>Difference</th>
+    <th>Year</th><th>Home Value</th><th>Mortgage Bal.</th><th>Buyer Net Equity</th>
+    <th>Total Rent Paid</th><th>Rent/mo That Year</th>
   </tr></thead><tbody>`;
 
   for (let i = 0; i < buyerData.length; i++) {
-    const diff = buyerData[i].netWorth - renterData[i].netWorth;
-    const color = diff > 0 ? 'var(--green)' : diff < 0 ? 'var(--red)' : 'inherit';
     html += `<tr>
       <td>Year ${buyerData[i].year}</td>
       <td>${fmt(buyerData[i].homeValue)}</td>
       <td>${fmt(buyerData[i].mortgageBalance)}</td>
       <td><strong>${fmt(buyerData[i].netWorth)}</strong></td>
-      <td>${fmt(renterData[i].portfolio)}</td>
-      <td><strong>${fmt(renterData[i].netWorth)}</strong></td>
-      <td style="color:${color};font-weight:700">${diff >= 0 ? '+' : ''}${fmt(diff)}</td>
+      <td style="color:var(--red)">${fmt(renterData[i].totalRentPaid)}</td>
+      <td>${fmt(renterData[i].monthlyRent)}/mo</td>
     </tr>`;
   }
   html += '</tbody>';
@@ -793,9 +823,10 @@ function renderNetWorthTable(buyerData, renterData) {
 function renderMonthlyTable(buyerData, renterData) {
   let html = `<thead><tr>
     <th>Year</th><th>Mortgage</th><th>Prop. Tax</th><th>Condo/Maint.</th><th>Insurance</th>
-    <th>Total Buy/mo</th><th>Rent/mo</th><th>Tenant Ins.</th><th>Total Rent/mo</th><th>Monthly Diff</th>
+    <th>Total Buy/mo</th><th>Rent</th><th>Ins+Util+Pkg</th><th>Total Rent/mo</th><th>Diff</th>
   </tr></thead><tbody>`;
 
+  const extras = +$('tenantInsurance').value + +$('renterUtilities').value + +$('renterParking').value;
   for (let i = 1; i < buyerData.length; i++) {
     const diff = buyerData[i].monthlyPayment - renterData[i].monthlyCost;
     const color = diff > 0 ? 'var(--red)' : 'var(--green)';
@@ -807,7 +838,7 @@ function renderMonthlyTable(buyerData, renterData) {
       <td>${fmt(buyerData[i].insurance)}</td>
       <td><strong>${fmt(buyerData[i].monthlyPayment)}</strong></td>
       <td>${fmt(renterData[i].monthlyRent)}</td>
-      <td>${fmt(+$('tenantInsurance').value)}</td>
+      <td>${fmt(extras)}</td>
       <td><strong>${fmt(renterData[i].monthlyCost)}</strong></td>
       <td style="color:${color};font-weight:700">${diff >= 0 ? '+' : ''}${fmt(diff)}</td>
     </tr>`;
@@ -855,12 +886,22 @@ function renderOntarioDetails(d) {
           <tr><td><strong>Annual Tax Savings</strong></td><td style="color:var(--green)"><strong>${fmt(d.fhsaTaxSaving)}</strong></td></tr>
         </table>
 
+        ${d.isNewBuild ? `
+        <h4 style="margin:18px 0 12px;font-size:1rem;">New Build HST (13%)</h4>
+        <table class="breakdown-table">
+          <tr><td>Gross HST (13%)</td><td>${fmt(d.hstData.hst)}</td></tr>
+          <tr><td>Federal GST Rebate</td><td style="color:var(--green)">-${fmt(d.hstData.gstRebate)}</td></tr>
+          <tr><td>Ontario PST Rebate</td><td style="color:var(--green)">-${fmt(d.hstData.pstRebate)}</td></tr>
+          <tr><td><strong>Net HST Payable</strong></td><td><strong>${fmt(d.hstData.netHST)}</strong></td></tr>
+        </table>` : ''}
+
         <h4 style="margin:18px 0 12px;font-size:1rem;">Upfront Costs Summary</h4>
         <table class="breakdown-table">
           <tr><td>Down Payment</td><td>${fmt(d.downPayment)}</td></tr>
           <tr><td>Net Land Transfer Tax</td><td>${fmt(d.netLTT)}</td></tr>
+          ${d.isNewBuild ? `<tr><td>Net HST</td><td>${fmt(d.hstData.netHST)}</td></tr>` : ''}
           <tr><td>Closing Costs</td><td>${fmt(d.closingCosts)}</td></tr>
-          <tr><td><strong>Total Upfront</strong></td><td><strong>${fmt(d.downPayment + d.netLTT + d.closingCosts)}</strong></td></tr>
+          <tr><td><strong>Total Upfront</strong></td><td><strong>${fmt(d.downPayment + d.netLTT + d.closingCosts + d.hstData.netHST)}</strong></td></tr>
         </table>
       </div>
     </div>
@@ -881,7 +922,8 @@ const sliders = [
   ['monthlyRent', v => fmt(v) + '/mo'],
   ['rentIncrease', v => v + '%'],
   ['tenantInsurance', v => fmt(v) + '/mo'],
-  ['investReturn', v => v + '%'],
+  ['renterUtilities', v => fmt(v) + '/mo'],
+  ['renterParking', v => fmt(v) + '/mo'],
   ['timeHorizon', v => v + ' years'],
   ['fhsaContrib', v => fmt(v) + '/yr'],
   ['taxRate', v => v + '%'],
@@ -896,6 +938,7 @@ sliders.forEach(([id, formatter]) => {
 });
 
 $('isFirstTimeBuyer').addEventListener('change', calculate);
+$('isNewBuild').addEventListener('change', calculate);
 
 // Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -907,8 +950,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// Initial calculation
-calculate();
+// Initial calculate();
 </script>
 </body>
 </html>
