@@ -664,7 +664,7 @@ function calculate() {
 
     // RENTER for this year
     currentRent = monthlyRent * Math.pow(1 + rentIncrease, year);
-    const renterMonthlyCost = currentRent + tenantInsurance;
+    const renterMonthlyCost = currentRent + tenantInsurance + renterUtilities + renterParking;
     totalRentPaid += renterMonthlyCost * 12;
 
     renterData.push({
@@ -710,9 +710,9 @@ function calculate() {
       <div class="sub">Mortgage: ${fmt(monthlyMortgage)}/mo</div>
     </div>
     <div class="summary-card">
-      <div class="label">Current Monthly Rent</div>
-      <div class="value">${fmt(monthlyRent)}</div>
-      <div class="sub">Year ${timeHorizon}: ${fmt(renterData[timeHorizon].monthlyRent)}/mo</div>
+      <div class="label">Current Monthly Rent + Costs</div>
+      <div class="value">${fmt(renterData[0].monthlyCost)}</div>
+      <div class="sub">Year ${timeHorizon}: ${fmt(renterData[timeHorizon].monthlyCost)}/mo</div>
     </div>
     <div class="summary-card">
       <div class="label">Upfront Cost to Buy</div>
